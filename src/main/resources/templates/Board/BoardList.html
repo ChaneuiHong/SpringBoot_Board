@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name = "viewport" content="with=device-width, initial-scale=1" >
+	<title>Welcome To Chaneui World</title>
+	<link href="theme/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+	
+<body>
+<table border=1>
+	<thead>
+	<tr>
+		<th>번호</th>
+		<th>제목</th>
+		<th>작성자</th>
+		<th>게시날짜</th>
+		<th>조회수</th>
+	</tr>
+	</thead>
+	<tbody>
+		<tr th:each="list : ${list}">
+			<td th:text="${list.idx}"></td>
+			<td> 
+			<!-- view에서 입력 받은 요청을 controller에 넘기는 과정 -->
+				<a th:href="@{/board/detail.do(idx=${list.idx})}" th:text="${list.title}"></a>
+			</td>
+			<td th:text="${list.content}"></td>
+			<td th:text="${list.writer}"></td>
+			<td th:text="${list.viewCnt}"></td>
+		</tr>
+	</tbody>
+</table>
+</body>
+
+
+</html>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.MisOutlier_Board.mapper.BoardMapper">
+
+	<!-- 마이바티스의 sql 태그는 공통적으로 사용되는 컬럼을 정의하기 위해 사용  -->
+	<sql id="boardColumns">
+		  idx
+		, title
+		, content
+		, writer
+		, view_cnt
+		, notice_yn
+		, secret_yn
+		, delete_yn
+		, insert_time
+		, update_time
+		, delete_time
+	</sql>
+	
+	<!-- SQL INSERT 문 처리 문법 -->
+	<!-- include를 통해 위에서 정의한 columns을 가져와서 사용-->
+	<insert id="insertBoard" parameterType="BoardDTO">
+		INSERT INTO tb_board (<include refid="boardColumns" />) 
+		VALUES (
+				  #{idx}
+				, #{title}
+				, #{content}
+				, #{writer}
+				, 0
+				, NVL(#{noticeYn}, 'N')
+				, NVL(#{secretYn}, 'N')
+				, 'N'
+				, SYSDATE
+				, NULL
+				, NULL
+				)
+	</insert>
+	
+	<!-- SELECT: idx를 인자로 하여 매핑-->
+	<select id = "selectBoardDetail" parameterType="long" resultType="BoardDTO">
+		
+		SELECT <include refid="boardColumns"/>
+		FROM tb_board
+		WHERE delete_yn = 'N'
+		AND idx = #{idx}
+		
+	</select>
+	
+	<!-- UPDATE -->
+	<update id="updateBoard" parameterType="BoardDTO">
+		UPDATE tb_board
+		SET 
+			update_time = SYSDATE
+			, title = #{title}
+			, content = #{content}
+			, writer = #{writer}
+			, notice_yn = NVL(#{noticeYn}, 'N')
+			, secret_yn = NVL(#{secretYn}, 'N')
+		WHERE
+			idx = #{idx}
+	</update>
+	
+	<!-- Delete -->
+	<update id="deleteBoard" parameterType="long">
+		UPDATE tb_board
+		SET
+			delete_yn = 'Y'
+			, delete_time = SYSDATE
+		WHERE
+			idx = #{idx}
+	</update>
+	
+	<!-- list 조회 -->
+	<select id="selectBoardList" parameterType="BoardDTO" resultType="BoardDTO">
+		SELECT <include refid="boardColumns"/>
+		FROM tb_board
+		WHERE delete_yn = 'N'
+		ORDER BY
+			notice_yn ASC,
+			idx ASC,
+			insert_time DESC
+	</select>
+	
+	<!-- list 개수 카운트 -->
+	<select id="selectBoardTotalCount" parameterType="BoardDTO" resultType="int">
+		SELECT COUNT(*)
+		FROM tb_board
+		WHERE delete_yn = 'N'		
+	</select>
+	
+
+</mapper>
+
